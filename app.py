@@ -262,7 +262,7 @@ def make_pdf_bytes(title: str, content: str) -> bytes:
     y -= 28
     pdf.setFont("Helvetica", 10)
 
-    for raw_line in (content or "").split("
+    for raw_line in (content or "").split("\n"):
 "):
         line = raw_line.replace("#", "").replace("*", "").strip()
         if not line:
