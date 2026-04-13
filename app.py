@@ -810,7 +810,7 @@ if st.session_state.get("report_unlocked"):
     with note_col:
         st.markdown("<div class='small'>Best sequence: Resume Builder → Auto Improve → Resume Score → Job Match → 7-Day Plan → Interview → Tracker.</div>", unsafe_allow_html=True)
 
-    tabs = st.tabs(["Resume Builder", "Auto Improve", "Resume Score", "Cover Letter", "Job Match", "7-Day Plan", "Interview", "Role Clarity", "Find Jobs", "Job Discovery"])
+    tabs = st.tabs(["Resume Builder", "Auto Improve", "Resume Score", "Cover Letter", "Job Match", "7-Day Plan", "Interview", "Role Clarity", "Job Discovery"])
 
     with tabs[0]:
         st.markdown("### Build or review your final resume")
@@ -1010,11 +1010,23 @@ Do not invent facts.
             st.markdown("#### Feedback")
             st.write(st.session_state["interview_feedback"])
 
-    with tabs[7]:
+        with tabs[7]:
         st.markdown("### Best roles for this profile")
-            with tabs[8]:
-        st.markdown("### 🔎 Job Discovery")
+        roles = st.session_state.get("recommended_roles", [])
+        avoid = st.session_state.get("not_ideal_roles", [])
 
+        if roles:
+            st.markdown("#### Best-fit roles")
+            for item in roles:
+                st.write(f"- {item}")
+
+        if avoid:
+            st.markdown("#### Not ideal right now")
+            for item in avoid:
+                st.write(f"- {item}")
+
+    with tabs[8]:
+        st.markdown("### 🔎 Job Discovery")
         st.markdown("Find real job opportunities based on your target role.")
 
         search_role = st.text_input("Search Role", value=target_role)
@@ -1028,7 +1040,6 @@ Do not invent facts.
                     {"title": f"{search_role} at Amazon", "link": "https://www.amazon.jobs"},
                     {"title": f"{search_role} at Flipkart", "link": "https://www.flipkartcareers.com"},
                 ]
-
                 st.session_state["job_results"] = jobs
             else:
                 st.warning("Please enter a role to search.")
@@ -1039,17 +1050,6 @@ Do not invent facts.
             st.markdown("#### 🎯 Suggested Jobs")
             for job in results:
                 st.markdown(f"- [{job['title']}]({job['link']})")
-        roles = st.session_state.get("recommended_roles", [])
-        avoid = st.session_state.get("not_ideal_roles", [])
-        if roles:
-            st.markdown("#### Best-fit roles")
-            for item in roles:
-                st.write(f"- {item}")
-        if avoid:
-            st.markdown("#### Not ideal right now")
-            for item in avoid:
-                st.write(f"- {item}")
-
 
     # Lower utilities
     st.markdown("---")
