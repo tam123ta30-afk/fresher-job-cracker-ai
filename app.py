@@ -992,25 +992,42 @@ Do not invent facts.
                     prompt = f"Generate 5 common interview questions for a fresher applying for {role_for_interview}. Also provide ideal structured answers."
                     st.session_state["interview_output"] = call_llm("You are an expert interview coach.", prompt)
                 else:
-                    st.session_state["interview_output"] = f"1. Tell me about yourself.\nAnswer: Briefly explain your education, key skills, and interest in {role_for_interview}.\n\n2. Why do you want this role?\nAnswer: Align your interest with the role and company.\n\n3. What are your strengths?\nAnswer: Mention 2 to 3 strengths with examples.\n\n4. Describe a challenge you faced.\nAnswer: Use STAR method.\n\n5. Why should we hire you?\nAnswer: Connect your skills and willingness to learn with the job."
+                    st.session_state["interview_output"] = (
+                        f"1. Tell me about yourself.\n"
+                        f"Answer: Briefly explain your education, key skills, and interest in {role_for_interview}.\n\n"
+                        "2. Why do you want this role?\n"
+                        "Answer: Align your interest with the role and company.\n\n"
+                        "3. What are your strengths?\n"
+                        "Answer: Mention 2 to 3 strengths with examples.\n\n"
+                        "4. Describe a challenge you faced.\n"
+                        "Answer: Use STAR method.\n\n"
+                        "5. Why should we hire you?\n"
+                        "Answer: Connect your skills and willingness to learn with the job."
+                    )
             except Exception as e:
                 st.error(f"Error generating questions: {e}")
+
         st.text_area("Interview Questions & Answers", value=st.session_state.get("interview_output", ""), height=240)
         answer = st.text_area("Practice Answer", key="practice_answer", height=140)
+
         if st.button("Evaluate My Answer", key="evaluate_interview", use_container_width=True):
             try:
                 if use_ai:
-                    eval_prompt = f"Evaluate this fresher interview answer for clarity, structure, confidence, and give improvement suggestions.\n\nAnswer:\n{answer}"
+                    eval_prompt = (
+                        "Evaluate this fresher interview answer for clarity, structure, confidence, "
+                        f"and give improvement suggestions.\n\nAnswer:\n{answer}"
+                    )
                     st.session_state["interview_feedback"] = call_llm("You are an interview coach.", eval_prompt)
                 else:
                     st.session_state["interview_feedback"] = "Your answer is decent. Improve structure using STAR method and be more specific with examples."
             except Exception as e:
                 st.error(f"Error evaluating answer: {e}")
+
         if st.session_state.get("interview_feedback"):
             st.markdown("#### Feedback")
             st.write(st.session_state["interview_feedback"])
 
-        with tabs[7]:
+    with tabs[7]:
         st.markdown("### Best roles for this profile")
         roles = st.session_state.get("recommended_roles", [])
         avoid = st.session_state.get("not_ideal_roles", [])
@@ -1050,7 +1067,6 @@ Do not invent facts.
             st.markdown("#### 🎯 Suggested Jobs")
             for job in results:
                 st.markdown(f"- [{job['title']}]({job['link']})")
-
     # Lower utilities
     st.markdown("---")
     col1, col2 = st.columns([1.1, 0.9], gap="large")
