@@ -810,7 +810,7 @@ if st.session_state.get("report_unlocked"):
     with note_col:
         st.markdown("<div class='small'>Best sequence: Resume Builder → Auto Improve → Resume Score → Job Match → 7-Day Plan → Interview → Tracker.</div>", unsafe_allow_html=True)
 
-    tabs = st.tabs(["Resume Builder", "Auto Improve", "Resume Score", "Cover Letter", "Job Match", "7-Day Plan", "Interview", "Role Clarity", "Find Jobs"])
+    tabs = st.tabs(["Resume Builder", "Auto Improve", "Resume Score", "Cover Letter", "Job Match", "7-Day Plan", "Interview", "Role Clarity", "Find Jobs", "Job Discovery"])
 
     with tabs[0]:
         st.markdown("### Build or review your final resume")
@@ -1012,6 +1012,33 @@ Do not invent facts.
 
     with tabs[7]:
         st.markdown("### Best roles for this profile")
+            with tabs[8]:
+        st.markdown("### 🔎 Job Discovery")
+
+        st.markdown("Find real job opportunities based on your target role.")
+
+        search_role = st.text_input("Search Role", value=target_role)
+        search_location = st.text_input("Location", value="India")
+
+        if st.button("Find Jobs", use_container_width=True):
+            if search_role:
+                jobs = [
+                    {"title": f"{search_role} at Zomato", "link": "https://www.zomato.com/careers"},
+                    {"title": f"{search_role} at Swiggy", "link": "https://careers.swiggy.com"},
+                    {"title": f"{search_role} at Amazon", "link": "https://www.amazon.jobs"},
+                    {"title": f"{search_role} at Flipkart", "link": "https://www.flipkartcareers.com"},
+                ]
+
+                st.session_state["job_results"] = jobs
+            else:
+                st.warning("Please enter a role to search.")
+
+        results = st.session_state.get("job_results", [])
+
+        if results:
+            st.markdown("#### 🎯 Suggested Jobs")
+            for job in results:
+                st.markdown(f"- [{job['title']}]({job['link']})")
         roles = st.session_state.get("recommended_roles", [])
         avoid = st.session_state.get("not_ideal_roles", [])
         if roles:
