@@ -314,7 +314,45 @@ def suggest_roles_from_resume(resume_text: str) -> Tuple[List[str], List[str]]:
     not_ideal = ["Highly technical software engineering roles", "Senior management roles", "Deep-specialist roles requiring years of experience"]
     return list(dict.fromkeys(recommended))[:5], not_ideal
 
+# -------- JOB DISCOVERY --------
 
+def slugify_for_naukri(query: str) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9 ]+", "", query).strip().lower()
+    slug = re.sub(r"\s+", "-", slug)
+    return slug
+
+def build_job_search_queries(roles: List[str], location: str) -> List[str]:
+    queries = []
+    for role in roles[:5]:
+        q = f"{role} fresher {location}"
+        queries.append(q.strip())
+    return queries
+
+def build_job_links(queries: List[str]) -> List[dict]:
+    links = []
+    for q in queries:
+        encoded = q.replace(" ", "%20")
+        links.append({
+            "query": q,
+            "linkedin": f"https://www.linkedin.com/jobs/search/?keywords={encoded}",
+            "indeed": f"https://www.indeed.com/jobs?q={encoded}",
+            "naukri": f"https://www.naukri.com/{slugify_for_naukri(q)}-jobs",
+        })
+    return links
+
+def build_apply_strategy(roles: List[str]) -> List[str]:
+    return [
+        "Apply to 5 startup roles (faster hiring)",
+        "Apply to 5 mid-size companies",
+        "Apply to 5 branded companies",
+        "Focus on jobs posted in last 7 days",
+    ]
+
+def build_recruiter_message(role: str, company: str):
+    return f"""Hi, I came across the {role} role at {company}.
+My profile aligns well and I would love to be considered.
+
+Would really appreciate a chance to connect. Thank you!"""
 def generate_action_plan(target_role: str, missing_skills: List[str], resume_score: int, profile_type: str) -> List[str]:
     role = target_role or "your target role"
     top_missing = ", ".join(missing_skills[:3]) if missing_skills else "role-specific keywords"
@@ -772,7 +810,7 @@ if st.session_state.get("report_unlocked"):
     with note_col:
         st.markdown("<div class='small'>Best sequence: Resume Builder → Auto Improve → Resume Score → Job Match → 7-Day Plan → Interview → Tracker.</div>", unsafe_allow_html=True)
 
-    tabs = st.tabs(["Resume Builder", "Auto Improve", "Resume Score", "Cover Letter", "Job Match", "7-Day Plan", "Interview", "Role Clarity"])
+    tabs = st.tabs(["Resume Builder", "Auto Improve", "Resume Score", "Cover Letter", "Job Match", "7-Day Plan", "Interview", "Role Clarity", "Find Jobs"])
 
     with tabs[0]:
         st.markdown("### Build or review your final resume")
